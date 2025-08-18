@@ -1,0 +1,29 @@
+---
+sidebar: sidebar 
+keywords: Cyber vault, cybervault, cyber-vault, data protection, security, ransomware, ONTAP 
+permalink: cyber-vault/ontap-cyber-vault-resources.html 
+summary: 有关ONTAP网络保险库的其他资源 
+---
+= 网络保险库资源
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+要了解有关此网络保险库信息中描述的信息的更多信息，请参阅以下附加信息和安全概念。
+
+* link:https://www.netapp.com/pdf.html?item=/media/108397-sb-4289-netapp-cyber-vaulting.pdf["NetApp网络保险库：多层数据保护解决方案简介"^]
+* link:https://www.netapp.com/newsroom/press-releases/news-rel-20240626-477898/["NetApp凭借业界首款 AI 驱动的盒内勒索软件检测解决方案荣获 AAA 评级"^]
+* link:https://www.netapp.com/blog/unified-data-storage-for-the-ai-era/#article3["利用全球最安全的存储提升网络弹性"^]
+* link:https://docs.netapp.com/us-en/ontap/ontap-security-hardening/security-hardening-overview.html["ONTAP安全强化指南"^]
+* link:https://docs.netapp.com/us-en/ontap/zero-trust/zero-trust-overview.html["NetApp零信任"^]
+* link:https://www.netapp.com/cyber-resilience/["NetApp网络弹性"^]
+* link:https://www.netapp.com/cyber-resilience/data-protection/["NetApp数据保护"^]
+* link:https://docs.netapp.com/us-en/ontap/peering/index.html["使用 CLI 的集群和 SVM 对等概述"^]
+* link:https://docs.netapp.com/us-en/ontap/concepts/snapvault-archiving-concept.html["SnapVault归档"^]
+* link:https://github.com/NetApp/ransomeware-cybervault-automation["配置、分析、cron脚本"^]
+

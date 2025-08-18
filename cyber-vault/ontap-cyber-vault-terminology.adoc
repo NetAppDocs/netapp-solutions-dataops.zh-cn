@@ -1,0 +1,37 @@
+---
+sidebar: sidebar 
+keywords: Cyber vault, cybervault, cyber-vault, data protection, security, ransomware, ONTAP, hardening 
+permalink: cyber-vault/ontap-cyber-vault-terminology.html 
+summary: 带有ONTAP术语的网络保险库 
+---
+= Cyber Vault ONTAP术语
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+这些是网络保险库架构中常用的术语。
+
+*自主勒索软件防护 (ARP)* - 自主勒索软件防护 (ARP) 功能使用 NAS（NFS 和 SMB）环境中的工作负载分析来主动、实时地检测并警告可能表明勒索软件攻击的异常活动。当怀疑受到攻击时，ARP 除了现有的计划 Snapshot 副本保护之外，还会创建新的 Snapshot 副本。有关详细信息，请参阅link:https://docs.netapp.com/us-en/ontap/anti-ransomware/index.html["ONTAP关于自主勒索软件防护的文档"^]
+
+*气隙（逻辑）* - 您可以通过利用以下方式将带有ONTAP的NetApp存储配置为逻辑气隙网络保险库：link:https://docs.netapp.com/us-en/ontap/snaplock/commit-snapshot-copies-worm-concept.html["SnapLock Compliance对 Snapshot 副本进行 WORM 保护"^]
+
+*气隙（物理）* - 物理气隙系统没有网络连接。使用磁带备份，您可以将图像移动到另一个位置。  SnapLock Compliance逻辑气隙与物理气隙系统一样强大。
+
+*堡垒主机* - 隔离网络上的专用计算机，配置用于抵御攻击。
+
+*不可变的 Snapshot 副本* - 无法修改的 Snapshot 副本，无一例外（包括支持组织或对存储系统进行低级格式化的能力）。
+
+*不可删除的 Snapshot 副本* - 无法删除的 Snapshot 副本，无一例外（包括支持组织或对存储系统进行低级格式化的能力）。
+
+*防篡改 Snapshot 副本* - 防篡改 Snapshot 副本使用SnapLock Compliance时钟功能将 Snapshot 副本锁定指定时间段。任何用户或NetApp支持人员都无法删除这些锁定的快照。如果卷受到勒索软件攻击、恶意软件、黑客、恶意管理员或意外删除的威胁，您可以使用锁定的 Snapshot 副本来恢复数据。有关详细信息，请参阅link:https://docs.netapp.com/us-en/ontap/snaplock/snapshot-lock-concept.html["有关防篡改 Snapshot 副本的ONTAP文档"^]
+
+* SnapLock* - SnapLock是一种高性能合规解决方案，适用于使用 WORM 存储以未修改的形式保留文件以满足监管和治理目的的组织。有关更多信息，请参阅link:https://docs.netapp.com/us-en/ontap/snaplock/["有关SnapLock的ONTAP文档"^] 。
+
+* SnapMirror* - SnapMirror是一种灾难恢复复制技术，旨在高效复制数据。 SnapMirror可以为本地或云中的辅助系统创建镜像（或数据的精确副本）、保管库（具有较长 Snapshot 副本保留期的数据副本）或两者。这些副本可用于许多不同的目的，例如灾难、云爆发或网络保险库（使用保险库策略并锁定保险库时）。有关详细信息，请参阅link:https://docs.netapp.com/us-en/ontap/concepts/snapmirror-disaster-recovery-data-transfer-concept.html["有关SnapMirror的ONTAP文档"^]
+
+* SnapVault* - 在ONTAP 9.3 中， SnapVault已被弃用，取而代之的是使用 vault 或 mirror-vault 策略配置SnapMirror 。这个术语虽然仍在使用，但也已被贬低。有关更多信息，请参阅link:https://docs.netapp.com/us-en/ontap/concepts/snapvault-archiving-concept.html["有关SnapVault的ONTAP文档"^] 。

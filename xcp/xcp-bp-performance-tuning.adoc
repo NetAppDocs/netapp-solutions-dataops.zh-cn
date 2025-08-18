@@ -1,0 +1,38 @@
+---
+sidebar: sidebar 
+permalink: xcp/xcp-bp-performance-tuning.html 
+keywords: performance, tuning, operations, windows 
+summary: 本节提供了一些有助于提高 XCP 操作性能的调整参数。 
+---
+= 性能调优
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+本节提供了一些有助于提高 XCP 操作性能的调整参数：
+
+* 为了更好地扩展并将工作负载分配到多个 XCP 实例，请拆分每个 XCP 实例的子文件夹以进行迁移和数据传输。
+* XCP 可以使用最大的 CPU 资源——CPU 核心越多，性能越好。因此，您应该在 XCP 服务器中拥有更多 CPU。我们在实验室测试了 128GB RAM 和 48x 核心 CPU，其性能比 8x CPU 和 8GB RAM 更好。
+* XCP 副本 `-parallel`选项取决于 CPU 的数量。默认的并行线程数（七）有时足以满足大多数 XCP 数据传输和迁移操作的需求。对于 XCP Windows，默认情况下并行进程的数量等于 CPU 的数量。最大数量 `-parallel`选项应小于或等于核心数。
+* 10GbE 对于数据传输来说是一个良好的开端。但是，我们使用 25GbE 和 100GbE 进行了测试，它们提供了更好的数据传输，建议用于大文件数据传输。
+* 对于Azure NetApp Files，性能因服务级别而异。有关详细信息，请参阅下表，其中显示了Azure NetApp Files服务级别和性能详细信息。
+
+
+|===
+| 服务水平 | 标准 | 高级 | 极端主义者 
+
+
+| 吞吐量 | 16MBps/太字节（TB） | 64MBps/TB | 128MBps/TB 
+
+
+| 工作负载类型 | 通用文件共享、电子邮件和 Web | BM、数据库和应用程序 | 延迟敏感型应用程序 
+
+
+| 性能说明 | 标准性能：每 TB 1,000 IOPS（16K I/O）和 16MBps/TB | 高级性能 – 每 TB 4,000 IOPS（16k I/O）和每 TB 64MBps | 极致性能：每 TB 8,000 IOPS（16k I/O）和每 TB 128MBps 
+|===
+您必须根据吞吐量和工作负载类型选择正确的服务级别。大多数客户从高级级别开始，并根据工作量改变服务级别。

@@ -1,0 +1,75 @@
+---
+sidebar: sidebar 
+permalink: cyber-vault/ontap-cyber-vault-ps-script.html 
+keywords: Cyber vault, powershell, script, configuration, validation, hardening 
+summary: 这是用于配置、强化和验证基于ONTAP的网络保险库的NetApp ONTAP解决方案 
+---
+= 配置、分析、cron脚本
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+NetApp创建了一个link:https://github.com/NetApp/ransomeware-cybervault-automation["可以下载的单个脚本"^]并用于配置、验证和安排网络保险库关系。
+
+
+
+== 此脚本的作用
+
+* 集群对等
+* SVM 对等
+* DP 卷创建
+* SnapMirror关系和初始化
+* 强化用于网络保险库的ONTAP系统
+* 根据传输计划暂停和恢复关系
+* 定期验证安全设置并生成显示任何异常的报告
+
+
+
+
+== 如何使用此脚本
+
+link:https://github.com/NetApp/ransomeware-cybervault-automation["下载脚本"^]要使用该脚本，只需按照以下步骤操作：
+
+* 以管理员身份启动 Windows PowerShell。
+* 导航到包含脚本的目录。
+* 使用执行脚本 `.\`语法以及必需的参数
+
+
+
+NOTE: 请确保输入所有信息。第一次运行（配置模式）时，它将要求提供生产系统和新网络保险库系统的凭证。之后，它将在系统之间创建 SVM 对等（如果不存在）、卷和SnapMirror并初始化它们。
+
+
+NOTE: Cron 模式可用于安排数据传输的静止和恢复。
+
+
+
+== 操作模式
+
+自动化脚本提供 3 种执行模式 - `configure` ， `analyze`和 `cron`。
+
+[source, powershell]
+----
+if($SCRIPT_MODE -eq "configure") {
+        configure
+    } elseif ($SCRIPT_MODE -eq "analyze") {
+        analyze
+    } elseif ($SCRIPT_MODE -eq "cron") {
+        runCron
+    }
+----
+* 配置 - 执行验证检查并将系统配置为隔离。
+* 分析——自动监控和报告功能，向监控组发送异常和可疑活动的信息，以确保配置不会偏离。
+* Cron - 为了启用断开连接的基础设施，cron 模式会自动禁用 LIF 并停止传输关系。
+
+
+传输选定卷中的数据需要一些时间，具体取决于系统性能和数据量。
+
+[source, powershell]
+----
+./script.ps1 -SOURCE_ONTAP_CLUSTER_MGMT_IP "172.21.166.157" -SOURCE_ONTAP_CLUSTER_NAME "NTAP915_Src" -SOURCE_VSERVER "svm_NFS" -SOURCE_VOLUME_NAME "Src_RP_Vol01" -DESTINATION_ONTAP_CLUSTER_MGMT_IP "172.21.166.159" -DESTINATION_ONTAP_CLUSTER_NAME "NTAP915_Destn" -DESTINATION_VSERVER "svm_nim_nfs" -DESTINATION_AGGREGATE_NAME "NTAP915_Destn_01_VM_DISK_1" -DESTINATION_VOLUME_NAME "Dst_RP_Vol01_Vault" -DESTINATION_VOLUME_SIZE "5g" -SNAPLOCK_MIN_RETENTION "15minutes" -SNAPLOCK_MAX_RETENTION "30minutes" -SNAPMIRROR_PROTECTION_POLICY "XDPDefault" -SNAPMIRROR_SCHEDULE "5min" -DESTINATION_CLUSTER_USERNAME "admin" -DESTINATION_CLUSTER_PASSWORD "PASSWORD123"
+----

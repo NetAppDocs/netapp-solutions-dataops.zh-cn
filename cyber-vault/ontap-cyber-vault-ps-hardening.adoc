@@ -1,0 +1,227 @@
+---
+sidebar: sidebar 
+permalink: cyber-vault/ontap-cyber-vault-ps-hardening.html 
+keywords: Cyber vault, powershell, script, configuration, validation, hardening 
+summary: 这是用于配置、强化和验证基于ONTAP的网络保险库的NetApp ONTAP解决方案 
+---
+= 使用 PowerShell 强化ONTAP Cyber Vault
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+与传统解决方案相比， ONTAP网络保险库具有更好的抵御网络攻击的能力。在设计增强安全性的架构时，考虑减少攻击面的措施至关重要。这可以通过各种方法实现，例如实施强化密码策略、启用 RBAC、锁定默认用户帐户、配置防火墙以及利用审批流程对保险库系统进行任何更改。此外，限制特定 IP 地址的网络访问协议有助于限制潜在的漏洞。
+
+ONTAP提供了一组控制措施，可以强化ONTAP存储。使用link:https://docs.netapp.com/us-en/ontap/ontap-security-hardening/security-hardening-overview.html["ONTAP的指导和配置设置"^]帮助组织满足信息系统机密性、完整性和可用性的规定安全目标。
+
+
+
+== 强化最佳实践
+
+
+
+=== 手动步骤
+
+. 创建具有预定义和自定义管理角色的指定用户。
+. 创建新的 IP 空间来隔离网络流量。
+. 创建驻留在新 IP 空间中的新 SVM。
+. 确保防火墙路由策略配置正确，并且所有规则都定期审核并根据需要更新。
+
+
+
+
+=== ONTAP CLI 或通过自动化脚本
+
+. 使用多管理员验证 (MFA) 保护管理
+. 启用集群之间“传输中”的标准数据加密。
+. 使用强加密密码保护 SSH 并强制使用安全密码。
+. 启用全局 FIPS。
+. 应禁用 Telnet 和远程 Shell (RSH)。
+. 锁定默认管理员帐户。
+. 禁用数据 LIF 并保护远程访问点。
+. 禁用并删除未使用或多余的协议和服务。
+. 加密网络流量。
+. 设置超级用户和管理角色时使用最小特权原则。
+. 使用允许的 IP 选项限制来自特定 IP 地址的 HTTPS 和 SSH。
+. 根据传输计划停止并恢复复制。
+
+
+项目 1-4 需要手动干预，例如指定隔离网络、隔离 IP 空间等，并且需要事先执行。有关配置强化的详细信息，请参阅link:https://docs.netapp.com/us-en/ontap/ontap-security-hardening/security-hardening-overview.html["ONTAP安全强化指南"^]。其余部分可以轻松实现自动化，以便于部署和监控。这种精心设计的方法的目的是提供一种机制来自动化强化步骤，以确保保险库控制器的未来安全。网络保险库隔离间隙打开的时间范围尽可能短。 SnapVault利用永久增量技术，该技术只会将自上次更新以来的更改移动到网络保险库中，从而最大限度地减少网络保险库必须保持开放的时间。为了进一步优化工作流程，网络保险库的开放与复制计划相协调，以确保最小的连接窗口。
+
+以下是用于强化ONTAP控制器的 PowerShell 代码示例。
+
+[source, powershell]
+----
+function removeSvmDataProtocols {
+    try {
+
+        # checking NFS service is disabled
+        logMessage -message "Checking if NFS service is disabled on vServer $DESTINATION_VSERVER"
+        $nfsService = Get-NcNfsService
+        if($nfsService) {
+            # Remove NFS
+            logMessage -message "Removing NFS protocol on vServer : $DESTINATION_VSERVER"
+            Remove-NcNfsService -VserverContext $DESTINATION_VSERVER -Confirm:$false
+            logMessage -message "NFS protocol removed on vServer :  $DESTINATION_VSERVER" -type "SUCCESS"
+        } else {
+            logMessage -message "NFS service is disabled on vServer $DESTINATION_VSERVER" -type "SUCCESS"
+        }
+
+        # checking CIFS/SMB server is disabled
+        logMessage -message "Checking if CIFS/SMB server is disabled on vServer $DESTINATION_VSERVER"
+        $cifsServer = Get-NcCifsServer
+        if($cifsServer) {
+            # Remove SMB/CIFS
+            logMessage -message "Removing SMB/CIFS protocol on vServer : $DESTINATION_VSERVER"
+            $domainAdministratorUsername = Read-Host -Prompt "Enter Domain administrator username"
+            $domainAdministratorPassword = Read-Host -Prompt "Enter Domain administrator password" -AsSecureString
+            $plainPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($domainAdministratorPassword))
+            Remove-NcCifsServer -VserverContext $DESTINATION_VSERVER -AdminUsername $domainAdministratorUsername -AdminPassword $plainPassword -Confirm:$false -ErrorAction Stop
+            logMessage -message "SMB/CIFS protocol removed on vServer :  $DESTINATION_VSERVER" -type "SUCCESS"
+        } else {
+            logMessage -message "CIFS/SMB server is disabled on vServer $DESTINATION_VSERVER" -type "SUCCESS"
+        }
+
+        # checking iSCSI service is disabled
+        logMessage -message "Checking if iSCSI service is disabled on vServer $DESTINATION_VSERVER"
+        $iscsiService = Get-NcIscsiService
+        if($iscsiService) {
+            # Remove iSCSI
+            logMessage -message "Removing iSCSI protocol on vServer : $DESTINATION_VSERVER"
+            Remove-NcIscsiService -VserverContext $DESTINATION_VSERVER -Confirm:$false
+            logMessage -message "iSCSI protocol removed on vServer :  $DESTINATION_VSERVER" -type "SUCCESS"
+        } else {
+            logMessage -message "iSCSI service is disabled on vServer $DESTINATION_VSERVER" -type "SUCCESS"
+        }
+
+        # checking FCP service is disabled
+        logMessage -message "Checking if FCP service is disabled on vServer $DESTINATION_VSERVER"
+        $fcpService = Get-NcFcpService
+        if($fcpService) {
+            # Remove FCP
+            logMessage -message "Removing FC protocol on vServer : $DESTINATION_VSERVER"
+            Remove-NcFcpService -VserverContext $DESTINATION_VSERVER -Confirm:$false
+            logMessage -message "FC protocol removed on vServer :  $DESTINATION_VSERVER" -type "SUCCESS"
+        } else {
+            logMessage -message "FCP service is disabled on vServer $DESTINATION_VSERVER" -type "SUCCESS"
+        }
+
+    } catch {
+        handleError -errorMessage $_.Exception.Message
+    }
+}
+
+function disableSvmDataLifs {
+    try {
+        logMessage -message "Finding all data lifs on vServer : $DESTINATION_VSERVER"
+        $dataLifs = Get-NcNetInterface -Vserver $DESTINATION_VSERVER | Where-Object { $_.Role -contains "data_core" }
+        $dataLifs | Select-Object -Property InterfaceName, OpStatus, DataProtocols, Vserver, Address
+
+        logMessage -message "Disabling all data lifs on vServer : $DESTINATION_VSERVER"
+        # Disable the filtered data LIFs
+        foreach ($lif in $dataLifs) {
+            $disableLif = Set-NcNetInterface -Vserver $DESTINATION_VSERVER -Name $lif.InterfaceName -AdministrativeStatus down -ErrorAction Stop
+            $disableLif | Select-Object -Property InterfaceName, OpStatus, DataProtocols, Vserver, Address
+        }
+        logMessage -message "Disabled all data lifs on vServer : $DESTINATION_VSERVER" -type "SUCCESS"
+
+    } catch {
+        handleError -errorMessage $_.Exception.Message
+    }
+}
+
+function configureMultiAdminApproval {
+    try {
+
+        # check if multi admin verification is enabled
+        logMessage -message "Checking if multi-admin verification is enabled"
+        $maaConfig = Invoke-NcSsh -Name $DESTINATION_ONTAP_CLUSTER_MGMT_IP -Credential $DESTINATION_ONTAP_CREDS -Command "set -privilege advanced; security multi-admin-verify show"
+        if ($maaConfig.Value -match "Enabled" -and $maaConfig.Value -match "true") {
+            $maaConfig
+            logMessage -message "Multi-admin verification is configured and enabled" -type "SUCCESS"
+        } else {
+            logMessage -message "Setting Multi-admin verification rules"
+            # Define the commands to be restricted
+            $rules = @(
+                "cluster peer delete",
+                "vserver peer delete",
+                "volume snapshot policy modify",
+                "volume snapshot rename",
+                "vserver audit modify",
+                "vserver audit delete",
+                "vserver audit disable"
+            )
+            foreach($rule in $rules) {
+                Invoke-NcSsh -Name $DESTINATION_ONTAP_CLUSTER_MGMT_IP -Credential $DESTINATION_ONTAP_CREDS -Command "security multi-admin-verify rule create -operation `"$rule`""
+            }
+
+            logMessage -message "Creating multi admin verification group for ONTAP Cluster $DESTINATION_ONTAP_CLUSTER_MGMT_IP, Group name : $MULTI_ADMIN_APPROVAL_GROUP_NAME, Users : $MULTI_ADMIN_APPROVAL_USERS, Email : $MULTI_ADMIN_APPROVAL_EMAIL"
+            Invoke-NcSsh -Name $DESTINATION_ONTAP_CLUSTER_MGMT_IP -Credential $DESTINATION_ONTAP_CREDS -Command "security multi-admin-verify approval-group create -name $MULTI_ADMIN_APPROVAL_GROUP_NAME -approvers $MULTI_ADMIN_APPROVAL_USERS -email `"$MULTI_ADMIN_APPROVAL_EMAIL`""
+            logMessage -message "Created multi admin verification group for ONTAP Cluster $DESTINATION_ONTAP_CLUSTER_MGMT_IP, Group name : $MULTI_ADMIN_APPROVAL_GROUP_NAME, Users : $MULTI_ADMIN_APPROVAL_USERS, Email : $MULTI_ADMIN_APPROVAL_EMAIL" -type "SUCCESS"
+
+            logMessage -message "Enabling multi admin verification group $MULTI_ADMIN_APPROVAL_GROUP_NAME"
+            Invoke-NcSsh -Name $DESTINATION_ONTAP_CLUSTER_MGMT_IP -Credential $DESTINATION_ONTAP_CREDS -Command "security multi-admin-verify modify -approval-groups $MULTI_ADMIN_APPROVAL_GROUP_NAME -required-approvers 1 -enabled true"
+            logMessage -message "Enabled multi admin verification group $MULTI_ADMIN_APPROVAL_GROUP_NAME" -type "SUCCESS"
+
+            logMessage -message "Enabling multi admin verification for ONTAP Cluster $DESTINATION_ONTAP_CLUSTER_MGMT_IP"
+            Invoke-NcSsh -Name $DESTINATION_ONTAP_CLUSTER_MGMT_IP -Credential $DESTINATION_ONTAP_CREDS -Command "security multi-admin-verify modify -enabled true"
+            logMessage -message "Successfully enabled multi admin verification for ONTAP Cluster $DESTINATION_ONTAP_CLUSTER_MGMT_IP" -type "SUCCESS"
+
+            logMessage -message "Enabling multi admin verification for ONTAP Cluster $DESTINATION_ONTAP_CLUSTER_MGMT_IP"
+            Invoke-NcSsh -Name $DESTINATION_ONTAP_CLUSTER_MGMT_IP -Credential $DESTINATION_ONTAP_CREDS -Command "security multi-admin-verify modify -enabled true"
+            logMessage -message "Successfully enabled multi admin verification for ONTAP Cluster $DESTINATION_ONTAP_CLUSTER_MGMT_IP" -type "SUCCESS"
+        }
+
+    } catch {
+        handleError -errorMessage $_.Exception.Message
+    }
+}
+
+function additionalSecurityHardening {
+    try {
+        $command = "set -privilege advanced -confirmations off;security protocol modify -application telnet -enabled false;"
+        logMessage -message "Disabling Telnet"
+        Invoke-NcSsh -Name $DESTINATION_ONTAP_CLUSTER_MGMT_IP -Credential $DESTINATION_ONTAP_CREDS -Command $command
+        logMessage -message "Disabled Telnet" -type "SUCCESS"
+
+        #$command = "set -privilege advanced -confirmations off;security config modify -interface SSL -is-fips-enabled true;"
+        #logMessage -message "Enabling Global FIPS"
+        ##Invoke-SSHCommand -SessionId $sshSession.SessionId -Command $command -ErrorAction Stop
+        #logMessage -message "Enabled Global FIPS" -type "SUCCESS"
+
+        $command = "set -privilege advanced -confirmations off;network interface service-policy modify-service -vserver cluster2 -policy default-management -service management-https -allowed-addresses $ALLOWED_IPS;"
+        logMessage -message "Restricting IP addresses $ALLOWED_IPS for Cluster management HTTPS"
+        Invoke-NcSsh -Name $DESTINATION_ONTAP_CLUSTER_MGMT_IP -Credential $DESTINATION_ONTAP_CREDS -Command $command
+        logMessage -message "Successfully restricted IP addresses $ALLOWED_IPS for Cluster management HTTPS" -type "SUCCESS"
+
+        #logMessage -message "Checking if audit logs volume audit_logs exists"
+        #$volume = Get-NcVol -Vserver $DESTINATION_VSERVER -Name audit_logs -ErrorAction Stop
+
+        #if($volume) {
+        #    logMessage -message "Volume audit_logs already exists! Skipping creation"
+        #} else {
+        #    # Create audit logs volume
+        #    logMessage -message "Creating audit logs volume : audit_logs"
+        #    New-NcVol -Name audit_logs -Aggregate $DESTINATION_AGGREGATE_NAME -Size 5g -ErrorAction Stop | Select-Object -Property Name, State, TotalSize, Aggregate, Vserver
+        #    logMessage -message "Volume audit_logs created successfully" -type "SUCCESS"
+        #}
+
+        ## Mount audit logs volume to path /vol/audit_logs
+        #logMessage -message "Creating junction path for volume audit_logs at path /vol/audit_logs for vServer $DESTINATION_VSERVER"
+        #Mount-NcVol -VserverContext $DESTINATION_VSERVER -Name audit_logs -JunctionPath /audit_logs | Select-Object -Property Name, -JunctionPath
+        #logMessage -message "Created junction path for volume audit_logs at path /vol/audit_logs for vServer $DESTINATION_VSERVER" -type "SUCCESS"
+
+        #logMessage -message "Enabling audit logging for vServer $DESTINATION_VSERVER at path /vol/audit_logs"
+        #$command = "set -privilege advanced -confirmations off;vserver audit create -vserver $DESTINATION_VSERVER -destination /audit_logs -format xml;"
+        #Invoke-SSHCommand -SessionI  $sshSession.SessionId -Command $command -ErrorAction Stop
+        #logMessage -message "Successfully enabled audit logging for vServer $DESTINATION_VSERVER at path /vol/audit_logs"
+
+    } catch {
+        handleError -errorMessage $_.Exception.Message
+    }
+}
+----

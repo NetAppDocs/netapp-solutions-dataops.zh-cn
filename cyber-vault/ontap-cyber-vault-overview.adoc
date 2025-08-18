@@ -1,0 +1,50 @@
+---
+sidebar: sidebar 
+keywords: Cyber vault, cybervault, cyber-vault, data protection, security, ransomware, ONTAP 
+permalink: cyber-vault/ontap-cyber-vault-overview.html 
+summary: 这是NetApp ONTAP网络保险库解决方案的概述，该解决方案由SnapLock Compliance提供支持，可实现不可变且不可磨灭的数据保留。 
+---
+= ONTAP Cyber Vault 概述
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+需要实施网络保险库的主要驱动威胁是网络攻击（尤其是勒索软件和数据泄露）的日益普遍和日益复杂化。link:https://www.verizon.com/business/resources/reports/dbir/["随着网络钓鱼的增多"^]以及越来越复杂的凭证窃取方法，用于发起勒索软件攻击的凭证随后可用于访问基础设施系统。在这些情况下，即使是坚固的基础设施系统也面临受到攻击的风险。抵御系统入侵的唯一方法就是将数据保护并隔离在网络保险库中。
+
+NetApp 基于ONTAP的网络保险库为组织提供了全面而灵活的解决方案来保护其最关键的数据资产。通过利用逻辑隔离和强大的强化方法， ONTAP使您能够创建安全、隔离的存储环境，以抵御不断演变的网络威胁。借助ONTAP，您可以确保数据的机密性、完整性和可用性，同时保持存储基础架构的灵活性和效率。
+
+
+NOTE: 从 2024 年 7 月开始，之前以 PDF 形式发布的技术报告内容已与ONTAP产品文档集成。此外，诸如本文档之类的新技术报告 (TR) 将不再获得 TR 编号。
+
+
+
+== 什么是网络保险库？
+
+网络保险库是一种特定的数据保护技术，涉及将关键数据存储在与主要 IT 基础设施分开的隔离环境中。
+
+“气隙”、*不可变*和*不可删除*的数据存储库，可免受影响主网络的威胁，例如恶意软件、勒索软件甚至内部威胁。可以通过*不可变*和*不可磨灭*的快照实现网络保险库。
+
+使用传统方法的气隙备份涉及创建空间并物理分离主媒体和辅助媒体。通过将媒体移出现场和/或切断连接，不良行为者就无法访问数据。这可以保护数据，但会导致恢复时间变慢。
+
+
+
+== NetApp 的网络保险库方法
+
+NetApp网络保险库参考架构的主要功能包括：
+
+* 安全、独立的存储基础设施（例如，隔离存储系统）
+* 数据副本必须毫无例外地*不可变*且*不可删除*
+* 严格的访问控制和多因素身份验证
+* 快速数据恢复能力
+
+
+您可以将NetApp存储与ONTAP结合使用，作为隔离网络保险库，方法是利用link:https://docs.netapp.com/us-en/ontap/snaplock/commit-snapshot-copies-worm-concept.html["SnapLock Compliance对 Snapshot 副本进行 WORM 保护"^]。您可以在 Cyber Vault 上执行所有基本的SnapLock Compliance任务。配置完成后，Cyber vault 卷将自动受到保护，无需手动将 Snapshot 副本提交到 WORM。有关逻辑气隙的更多信息，请参阅link:https://www.netapp.com/blog/ransomware-protection-snaplock/["博客"^]
+
+SnapLock Compliance用于遵守银行和金融法规 SEC 70-a-4(f)、FINRA 4511(c) 和 CFTC 1.31(c)-(d)。该公司已通过 Cohasset Associates 认证，符合这些规定（可根据要求提供审计报告）。通过使用获得此认证的SnapLock Compliance，您将获得一种强化的数据隔离机制，世界上最大的金融机构依靠该机制来确保银行记录的保留和检索。
+
+image:ontap-cyber-vault-logical-air-gap.png["使用NetApp ONTAP实现逻辑隔离的网络保险库"]

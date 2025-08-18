@@ -1,0 +1,36 @@
+---
+sidebar: sidebar 
+keywords: Cyber vault, cybervault, cyber-vault, data protection, security, ransomware, ONTAP, hardening 
+permalink: cyber-vault/ontap-cyber-vault-hardening.html 
+summary: 建议采取其他措施来强化ONTAP的网络保险库 
+---
+= 网络保险库强化
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+这些是强化ONTAP网络保险库的额外建议。请参阅下面的ONTAP强化指南以获取更多建议和程序。
+
+
+
+== 网络保险库强化建议
+
+* 隔离网络保险库的管理平面
+* 不要在目标集群上启用数据 LIF，因为它们是额外的攻击媒介
+* 在目标集群上，使用服务策略限制对源集群的集群间 LIF 访问
+* 使用服务策略和堡垒主机对目标集群上的管理 LIF 进行分段，以限制访问
+* 限制从源集群到网络保管库的所有数据流量，仅允许SnapMirror流量所需的端口
+* 尽可能禁用ONTAP中任何不需要的管理访问方法，以减少攻击面
+* 启用审计日志记录和远程日志存储
+* 启用多管理员验证，并要求常规存储管理员之外的管理员（例如 CISO 员工）进行验证
+* 实施基于角色的访问控制
+* 要求系统管理员和 ssh 进行多因素管理身份验证
+* 对脚本和 REST API 调用使用基于令牌的身份验证
+
+
+请参阅link:https://docs.netapp.com/us-en/ontap/ontap-security-hardening/security-hardening-overview.html["ONTAP强化指南"]，link:https://docs.netapp.com/us-en/ontap/multi-admin-verify/index.html["多管理员验证概述"^]和link:https://www.netapp.com/media/17055-tr4647.pdf["ONTAP多因素身份验证指南"^]如何完成这些强化步骤。

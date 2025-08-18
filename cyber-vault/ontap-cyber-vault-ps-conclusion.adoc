@@ -1,0 +1,22 @@
+---
+sidebar: sidebar 
+permalink: cyber-vault/ontap-cyber-vault-ps-conclusion.html 
+keywords: Cyber vault, powershell, script, configuration, validation, hardening 
+summary: 这是用于配置、强化和验证基于ONTAP的网络保险库的NetApp ONTAP解决方案 
+---
+= ONTAP cyber Vault PowerShell 解决方案结论
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+通过利用ONTAP提供的气隙和强大的强化方法， NetApp使您能够创建一个安全、隔离的存储环境，以抵御不断演变的网络威胁。所有这些都是在保持现有存储基础设施的灵活性和效率的同时实现的。这种安全访问使公司能够以对现有人员、流程和技术框架进行最小限度的改变来实现其严格的安全和正常运行时间目标。
+
+ONTAP Cyber Vault 使用ONTAP中的原生功能，是一种简单的方法，可提供额外的保护，以创建数据的不可变和不可磨灭的副本。将 NetApp 基于ONTAP的网络保险库添加到整体安全态势中将：
+
+* 创建一个与生产和备份网络分离且断开的环境，并限制用户对它的访问。
+

@@ -1,0 +1,24 @@
+---
+sidebar: sidebar 
+permalink: xcp/xcp-bp-best-practices.html 
+keywords: best practices, guidelines, recommendations, IMT 
+summary: 本节包含使用NetApp XCP 迁移数据的最佳实践、指南和建议。 
+---
+= 最佳实践指南和建议
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+* 使用支持IMT的 XCP 客户端操作系统。  IMT支持的客户端经过NetApp认证。
+* 在Linux操作系统中以root用户身份运行XCP进行迁移，可以以sudo用户身份运行xcp命令，但XCP不支持。
+* 每个客户端仅运行一个 XCP 实例。从技术上讲，您可以从不同的位置在同一台主机上运行多个 XCP 实例，但这不是受支持的做法。事实上，运行许多实例可能会导致失败。
+* XCP NFS 能够从实时源数据集迁移，并且支持此配置。不支持从实时源数据集进行 XCP SMB 迁移，并且可能会导致失败。
+* 最佳做法是为每次增量同步创建一个具有不同名称的新快照，以便在发生故障时可以轻松地根据快照名称创建增量迁移路径。
+* 如果您正在执行基于快照的迁移，最佳做法是继续基于快照的迁移直至切换。
+* 如果您拥有超过 1000 万个文件，并且增量数据变化超过 50%，则最佳做法是使用比安装和管理指南中的最低建议更高的核心数和更多的内存。
+

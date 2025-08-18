@@ -1,0 +1,23 @@
+---
+sidebar: sidebar 
+permalink: xcp/xcp-bp-small-files.html 
+keywords: on-premises, cloud, migration, small files 
+summary: 此用例基于NetApp旅游行业最大的客户，用于将数百万个小型本地文件迁移到云端。 
+---
+= 使用 XCP Data Mover 将数百万个小文件迁移到灵活存储
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+此用例基于NetApp旅游行业最大的客户，用于本地到云的数据迁移。由于 COVID-19 减少了旅游行业的需求，客户希望节省其本地环境中用于需求定价应用程序的高端存储的资本支出。该客户有一个严格的 SLA，需要将数百万个小文件迁移到云端。
+
+下图描述了从本地到Azure NetApp Files 的小文件数据迁移。
+
+image:xcp-bp-031.png["该图显示输入/输出对话框或表示书面内容"]
+
+有关详细信息，请参阅 https://blog.netapp.com/XCP-cloud-data-migration["NetApp XCP Data Mover 解决方案：从本地到云端"^]博客。

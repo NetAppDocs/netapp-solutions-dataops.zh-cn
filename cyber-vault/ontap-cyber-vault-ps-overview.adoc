@@ -1,0 +1,91 @@
+---
+sidebar: sidebar 
+permalink: cyber-vault/ontap-cyber-vault-ps-overview.html 
+keywords: Cyber vault, powershell, script, configuration, validation, hardening 
+summary: 这是用于配置、强化和验证基于ONTAP的网络保险库的NetApp ONTAP解决方案 
+---
+= 使用 PowerShell 的ONTAP Cyber Vault 概述
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+在当今的数字环境中，保护组织的关键数据资产不仅是一种最佳实践，更是业务的当务之急。网络威胁正以前所未有的速度发展，传统的数据保护措施已不足以保证敏感信息的安全。这就是网络保险库的作用所在。NetApp 基于ONTAP的尖端解决方案将先进的隔离技术与强大的数据保护措施相结合，打造出一道抵御网络威胁的坚不可摧的屏障。通过使用安全强化技术隔离最有价值的数据，网络保险库可以最大限度地减少攻击面，从而确保最关键的数据在需要时保持机密、完整且随时可用。
+
+网络保险库是一种安全的存储设施，由防火墙、网络和存储等多层保护组成。这些组件保护关键业务运营所需的重要恢复数据。网络保险库的组件会根据保险库策略定期与基本生产数据同步，但除此之外仍然无法访问。这种隔离且断开的设置可确保在发生危害生产环境的网络攻击时，可以轻松地从网络保险库进行可靠的最终恢复。
+
+NetApp通过配置网络、禁用 LIF、更新防火墙规则以及将系统与外部网络和互联网隔离，轻松为网络保险库创建隔离间隙。这种强大的方法有效地将系统与外部网络和互联网断开，提供无与伦比的保护，防止远程网络攻击和未经授权的访问尝试，使系统免受基于网络的威胁和入侵。
+
+将此与SnapLock Compliance保护相结合，数据无法被修改或删除，即使是ONTAP管理员或NetApp支持人员也无法修改或删除。  SnapLock定期接受 SEC 和 FINRA 法规的审核，确保数据弹性符合银行业严格的 WORM 和数据保留法规。  NetApp是唯一一家经过 NSA CSfC 验证可以存储绝密数据的企业存储公司。
+
+image:ontap-cyber-vault-logical-air-gap.png["具有不可变且不可磨灭的SnapLock副本的气隙ONTAP网络保险库"]
+
+本文档介绍了 NetApp 网络保险库从本地ONTAP存储自动配置到另一个指定ONTAP存储的过程，其中不可变快照增加了额外的保护层，以防止网络攻击，从而实现快速恢复。作为此架构的一部分，整个配置均按照ONTAP最佳实践应用。最后一部分介绍了在发生攻击时执行恢复的说明。
+
+
+NOTE: 同样的解决方案也适用于使用 FSx ONTAP在 AWS 中创建指定的网络保险库。
+
+
+
+== 创建ONTAP网络保险库的高级步骤
+
+* 创建对等关系
++
+** 使用ONTAP存储的生产站点与指定的网络保管库ONTAP存储对等
+
+
+* 创建SnapLock Compliance卷
+* 设置SnapMirror关系和规则以设置标签
++
+** 已配置SnapMirror关系和适当的计划
+
+
+* 在启动SnapMirror （保管库）传输之前设置保留
++
+** 对复制的数据应用保留锁，进一步防止数据被任何内部人员窃取或数据故障。使用此功能，在保留期到期之前无法删除数据
+** 组织可以根据自己的需求将这些数据保存几周/几个月
+
+
+* 根据标签初始化SnapMirror关系
++
+** 初始播种和永久增量传输根据SnapMirror计划进行
+** 数据受到SnapLock合规性的保护（不可变且不可删除），并且数据可供恢复
+
+
+* 实施严格的数据传输控制
++
+** 网络保险库在有限的时间内解锁，包含来自生产现场的数据，并与保险库中的数据同步。传输完成后，连接断开、关闭并再次锁定
+
+
+* 快速恢复
++
+** 如果生产站点的主要数据受到影响，则网络保管库中的数据可以安全地恢复到原始生产环境或其他选定的环境
+
+
+
+
+image:ontap-cyber-vault-air-gap.png["创建ONTAP网络保险库的高级步骤"]
+
+
+
+== 解决方案组件
+
+NetApp ONTAP在源集群和目标集群上运行 9.15.1。
+
+ONTAP One： NetApp ONTAP 的一体化许可证。
+
+ONTAP One 许可证使用的功能：
+
+* SnapLock Compliance
+* SnapMirror
+* 多管理员验证
+* ONTAP提供的所有强化功能
+* 为网络保险库提供单独的 RBAC 凭证
+
+
+
+NOTE: 所有ONTAP统一物理阵列均可用于网络保险库，但基于AFF C 系列容量的闪存系统和FAS混合闪存系统是实现此目的最具成本效益的理想平台。请咨询link:ontap-cyber-vault-sizing.html["ONTAP网络保险库大小调整"]以获得尺寸指导。
