@@ -1413,7 +1413,6 @@
   <block id="14324adbfb79ad4b6832f6a02a1275db" category="list-text">从下载 XCP 许可证<block ref="eab886d42d2df7a710066e6d9bf6f5f5" category="inline-link-rx"></block>。  </block>
   <block id="7481213bd7173438d06de418474e428b" category="list-text">您必须在 mysupport.netapp.com 上拥有一个NetApp帐户，或者您可以免费注册。</block>
   <block id="d25e9f08475ddf6a2701e7cfbd67ff06" category="list-text">下载许可证并做好准备。</block>
-  <block id="b9611b870758eac97bd0c3bcb3fc8026" category="list-text">为每个 Azure NetApp卷或云中的云卷服务（高级服务级别）在本地创建一个 NFS 共享，用于 XCP 目录。</block>
   <block id="3d19c697861d11cce0f1d78d41cfea64" category="list-text">创建 NAS 卷并配置数据目标的共享。</block>
   <block id="4f2a304b9680876edc7cb61b5c4c7134" category="list-text">对于多个 XCP 实例，您必须有一个或多个服务器或云实例才能将数据从多个源文件夹或文件传输到目标。</block>
   <block id="adc4e34febc2f5919cfa03870630c2fc" category="list-text">maxdir 大小（默认值为 308MB）定义了单个文件夹中的最大文件数（约一百万）。增加 maxdir 大小值以增加文件数量。增加该值会对额外的 CPU 周期产生影响。</block>
@@ -1521,4 +1520,5 @@
   <block id="1eff9302c319abb4fe8a4c919bb75125" category="sidebar">使用NetApp XCP 进行数据迁移</block>
   <block id="acf055fa7efae33ce06471f448ae1267" category="sidebar">客户场景</block>
   <block id="c5071cdf8081474104ef1eee5ec6d784" category="sidebar">使用 ACL 将 CIFS 数据从源存储箱迁移到ONTAP</block>
+  <block id="212969b8fbef38a460a102c0de1dc0a4" category="list-text">为每个 Azure NetApp卷或在Google Cloud NetApp Volumes为 XCP 目录创建本地 NFS 共享（高级服务级别）。</block>
 </blocks>

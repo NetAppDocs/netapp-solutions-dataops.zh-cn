@@ -88,7 +88,7 @@ rpcinfo -p < NAS IP or on-prem nfs data LIF ip >
 .. 下载许可证并做好准备。
 
 
-. 为每个 Azure NetApp卷或云中的云卷服务（高级服务级别）在本地创建一个 NFS 共享，用于 XCP 目录。
+. 为每个 Azure NetApp卷或在Google Cloud NetApp Volumes为 XCP 目录创建本地 NFS 共享（高级服务级别）。
 . 创建 NAS 卷并配置数据目标的共享。
 . 对于多个 XCP 实例，您必须有一个或多个服务器或云实例才能将数据从多个源文件夹或文件传输到目标。
 . maxdir 大小（默认值为 308MB）定义了单个文件夹中的最大文件数（约一百万）。增加 maxdir 大小值以增加文件数量。增加该值会对额外的 CPU 周期产生影响。
